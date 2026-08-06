@@ -72,6 +72,27 @@ Point it at a file:
 Humanize the prose in docs/caching-design.md.
 ```
 
+## Operating modes
+
+Engineering Humanizer has two explicit modes:
+
+- **Audit:** Inspect the artifact and report concrete findings without changing it. Findings identify the location, the pattern or engineering problem, its effect, and a direction for correction.
+- **Rewrite:** Produce the improved artifact while preserving technical meaning and protected content. The skill audits its work internally and returns the final rewrite rather than an intermediate draft.
+
+Use audit mode when you want diagnosis only:
+
+```text
+Audit this pull request description with the engineering humanizer. Do not rewrite it.
+```
+
+Use rewrite mode when you want the artifact changed:
+
+```text
+Rewrite docs/caching-design.md with the engineering humanizer.
+```
+
+`Rewrite` is the default when you ask the skill to humanize, improve, edit, or revise something. Source-code review defaults to audit unless you ask to implement, refactor, or fix the code.
+
 Use it for repository-aware review:
 
 ```text

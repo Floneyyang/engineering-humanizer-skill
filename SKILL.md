@@ -1,6 +1,6 @@
 ---
 name: engineering-humanizer-skill
-description: Humanize software-engineering writing and improve repository-aware code without changing technical meaning. Use for pull requests, commits, documentation, design notes, incident reports, code comments, reviews, tests, and source code. Preserve technical tokens, evidence, uncertainty, and compatibility claims.
+description: Audit or rewrite software-engineering writing and repository-aware code without changing technical meaning. Use audit mode for findings without edits and rewrite mode for a revised artifact. Applies to pull requests, commits, documentation, design notes, incident reports, code comments, reviews, tests, and source code. Preserve technical tokens, evidence, uncertainty, and compatibility claims.
 ---
 
 # Engineering Humanizer
@@ -444,29 +444,41 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
 ---
 
-## Invocation Modes
+## Operating Modes
 
-**Pasted text (default).** The user gives text in the conversation. Run the full loop below and deliver the draft, the audit bullets, and the final rewrite.
+Choose one operating mode. An explicit request wins. Treat `re-write` and `rewrite` as the same mode. If the user asks to humanize, improve, edit, or revise without naming a mode, use **rewrite**. If the user asks to inspect, assess, review, or identify problems without asking for changes, use **audit**. Ask only when the intent remains genuinely ambiguous.
 
-**File mode.** The user points at a file. Read it, run the draft → audit → final loop internally, then rewrite only the requested material. By default, humanize prose and leave code blocks, frontmatter, structured data, generated content, and link targets untouched. Change source code only when the user includes code in scope. Report a short summary instead of pasting the whole file.
+### Audit
 
-**Embedded mode.** Another task or agent is using this skill as one step of a larger job (a PR description, a commit message, a doc). Run the loop internally and output only the final text. No draft, no audit bullets, no summary. The caller wants prose, not ceremony.
-
-## Process and Output
+Analyze without changing the artifact. Do not edit a referenced file or silently provide a rewritten replacement.
 
 1. Classify the artifact, audience, and intended outcome.
-2. Mark protected technical tokens, factual claims, uncertainty, and literal content.
+2. Mark protected technical tokens, claims, uncertainty, and literal content.
 3. Inspect relevant repository context when source code or project conventions are in scope.
-4. Write a draft that removes filler, inflated language, fake confidence, and unnecessary ceremony while preserving meaning.
-5. Audit the draft:
-   - Did any claim become stronger?
-   - Did any technical token, condition, limitation, or uncertainty change?
-   - Was any behavior, test result, cause, benchmark, guarantee, dependency, or compatibility claim invented?
-   - Does the result fit the artifact and repository?
-   - Which remaining patterns make it feel generic or mechanically generated?
-6. Revise into the final result.
+4. Report concrete findings ordered by impact. For each finding, identify the location or short excerpt, name the pattern or engineering problem, explain its effect, and suggest a direction for correction.
+5. Separate correctness, evidence, repository-fit, and style findings when that distinction helps. Do not call text AI-generated; these patterns are heuristics.
+6. Say when no material issues are found. Do not manufacture findings to fill a quota.
 
-In pasted-text mode, deliver the draft, brief audit bullets, and final rewrite. In file and embedded modes, run the audit internally and deliver only what the mode calls for. For code review, report concrete findings rather than rewriting code unless the user asks for implementation.
+### Rewrite
+
+Produce the improved artifact. Preserve meaning and protected content, and run the audit checks internally before returning the result.
+
+1. Classify the artifact, audience, and intended outcome.
+2. Mark protected technical tokens, claims, uncertainty, and literal content.
+3. Inspect relevant repository context when source code or project conventions are in scope.
+4. Rewrite the requested material to remove filler, inflated language, fake confidence, unnecessary ceremony, and relevant engineering problems.
+5. Verify that no claim became stronger; no token, condition, limitation, or uncertainty changed; and no behavior, result, cause, benchmark, guarantee, dependency, or compatibility claim was invented.
+6. Deliver the final rewrite, not an intermediate draft. Add a brief change summary only when it helps the user evaluate a file edit or substantial transformation.
+
+For source-code review, default to audit. Enter rewrite mode for code only when the user asks to implement, refactor, fix, or otherwise change it.
+
+## Invocation Context
+
+**Pasted text.** Audit it in place or return the final rewrite, according to the selected operating mode.
+
+**File.** In audit mode, leave the file untouched and report findings with locations. In rewrite mode, change only the requested material. Humanize prose by default while preserving code blocks, frontmatter, structured data, generated content, and link targets unless they are explicitly in scope.
+
+**Embedded.** Return only the output requested by the caller. In rewrite mode, output only the final text. In audit mode, output concise findings. Omit process narration and ceremony.
 
 ## Sources
 
